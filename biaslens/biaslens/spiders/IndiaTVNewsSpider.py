@@ -23,19 +23,19 @@ class IndiaTVNewsSpider(scrapy.Spider):
                 or article.xpath(".//a[@class='thumb']/img/@src").get()
 
             yield {
-                "headline": headline.strip() if headline else "",
-                "description": description.strip() if description else "",
-                "url": response.urljoin(url) if url else "",
-                "last_updated": published_date or "",
-                "category": "India",
-                "image_url": image_url or "",
-                "author": "",
-                "published_date": published_date or "",
+                "headline": headline.strip() if headline else None,
+                "description": description.strip() if description else None,
+                "url": response.urljoin(url) if url else None,
+                "last_updated": published_date or None,
+                "category": None,
+                "image_url": image_url or None,
+                "author": None,
+                "published_date": published_date or None,
                 "source": "indiatvnews.com",
-                "content": "",
-                "tags": [],
-                "comments_count": 0,
-                "shares_count": 0,
-                "sentiment": "",
-                "bias_score": ""
+                "content": None,
+                "tags": None,
+                "comments_count": None,
+                "shares_count": None,
+                "sentiment": None,
+                "bias_score": None
             }

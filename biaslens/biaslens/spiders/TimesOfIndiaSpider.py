@@ -17,11 +17,19 @@ class TimesOfIndiaSpider(scrapy.Spider):
             link = article.xpath(".//span[@class='w_tle']/a/@href").get()
 
             yield {
-                "title": title.strip() if title else "",
-                "summary": "",
-                "topics": [],
-                "image_url": "",
-                "first_published": "",
-                "last_published": "",
-                "url": response.urljoin(link) if link else "",
+                "headline": title.strip() if title else None,
+                "description": None,
+                "url": response.urljoin(link) if link else None,
+                "last_updated": None,
+                "category": None,
+                "image_url": None,
+                "author": None,
+                "published_date": None,
+                "source": "timesofindia.indiatimes.com",
+                "content": None,
+                "tags": None,
+                "comments_count": None,
+                "shares_count": None,
+                "sentiment": None,
+                "bias_score": None
             }

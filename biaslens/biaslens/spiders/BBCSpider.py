@@ -21,12 +21,22 @@ class BbcspiderSpider(scrapy.Spider):
         data = json.loads(response.text)
         for item in data.get("data", []):
             yield {
-                "title": item.get("title"),
-                "summary": item.get("summary"),
-                "topics": item.get("topics"),
-                "image_url": item.get("indexImage", {}).get("model", {}).get("blocks", {}).get("src"),
-                "first_published": item.get("firstPublishedAt"),
-                "last_published": item.get("lastPublishedAt"),
+                "headline": item.get("title") or None,
+                "description": item.get("summary") or None,
+                "url": item.get("path") or None,
+                "last_updated": item.get("lastPublishedAt") or None,
+                "category": None,
+                "image_url": item.get("indexImage", {}).get("model", {}).get("blocks", {}).get("src") or None,
+                "author": None,
+                "published_date": item.get("firstPublishedAt") or None,
+                "source": "bbc.com",
+                "content": None,
+                "tags": item.get("topics") or None,
+                "comments_count": None,
+                "shares_count": None,
+                "sentiment": None,
+                "bias_score": None
+
             }
 
 
