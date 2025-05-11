@@ -13,6 +13,19 @@ SPIDER_MODULES = ["biaslens.spiders"]
 NEWSPIDER_MODULE = "biaslens.spiders"
 
 
+MONGODB_URI = 'mongodb://localhost:27017'
+MONGODB_DATABASE = 'biaslens'
+MONGODB_COLLECTION = 'news_articles'
+
+
+# ITEM_PIPELINES = {
+#     'scrapy_mongodb.MongoDBPipeline': 300,
+# }
+
+ITEM_PIPELINES = {
+    'biaslens.pipelines.mongodb_pipeline.MongoDBPipeline': 300,
+}
+MONGODB_UNIQUE_KEY = 'url'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "biaslens (+http://www.yourdomain.com)"
 

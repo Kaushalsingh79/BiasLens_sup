@@ -22,20 +22,40 @@ class IndiaTVNewsSpider(scrapy.Spider):
             image_url = article.xpath(".//a[@class='thumb']/img/@data-original").get() \
                 or article.xpath(".//a[@class='thumb']/img/@src").get()
 
-            yield {
-                "headline": headline.strip() if headline else None,
-                "description": description.strip() if description else None,
-                "url": response.urljoin(url) if url else None,
-                "last_updated": published_date or None,
-                "category": None,
-                "image_url": image_url or None,
-                "author": None,
-                "published_date": published_date or None,
-                "source": "indiatvnews.com",
-                "content": None,
-                "tags": None,
-                "comments_count": None,
-                "shares_count": None,
-                "sentiment": None,
-                "bias_score": None
-            }
+            full_url = response.urljoin(url) if url else None
+
+            yield scrapy.Request(
+                url=full_url,
+                callback=self.parse_article,
+                meta={
+                    "headline": headline.strip() if headline else None,
+                    "description": description.strip() if description else None,
+                    "url": full_url,
+                    "last_updated": published_date or None,
+                    "image_url": image_url or None,
+                }
+            )
+
+    def parse_article(self, response):
+        content_paragraphs = response.xpath(
+            "//div[@id='content']//p/text()").getall()
+        content = " ".join([p.strip()
+                           for p in content_paragraphs if p.strip()])
+
+        yield {
+            "headline": response.meta["headline"],
+            "description": response.meta["description"],
+            "url": response.meta["url"],
+            "last_updated": response.meta["last_updated"],
+            "category": None,
+            "image_url": response.meta["image_url"],
+            "author": None,
+            "published_date": response.meta["last_updated"],
+            "source": "indiatvnews.com",
+            "content": content or None,
+            "tags": None,
+            "comments_count": None,
+            "shares_count": None,
+            "sentiment": None,
+            "bias_score": None
+        }

@@ -13,23 +13,33 @@ class TimesOfIndiaSpider(scrapy.Spider):
     def parse_page(self, response):
         articles = response.xpath("//ul[@class='list5 clearfix']/li")
         for article in articles:
-            title = article.xpath(".//span[@class='w_tle']/a/text()").get()
             link = article.xpath(".//span[@class='w_tle']/a/@href").get()
+            if link:
+                url = response.urljoin(link)
+                yield scrapy.Request(url, callback=self.parse_article)
 
-            yield {
-                "headline": title.strip() if title else None,
-                "description": None,
-                "url": response.urljoin(link) if link else None,
-                "last_updated": None,
-                "category": None,
-                "image_url": None,
-                "author": None,
-                "published_date": None,
-                "source": "timesofindia.indiatimes.com",
-                "content": None,
-                "tags": None,
-                "comments_count": None,
-                "shares_count": None,
-                "sentiment": None,
-                "bias_score": None
-            }
+    def parse_article(self, response):
+        title = response.xpath("//h1/text()").get()
+        paragraphs = response.xpath(
+            "//div[@data-articlebody='1']//text()").getall()
+        content = ' '.join([p.strip() for p in paragraphs if p.strip()])
+        image_url = response.xpath(
+            "//div[@data-articlebody='1']//img/@src").get()
+
+        yield {
+            "headline": title.strip() if title else None,
+            "description": None,
+            "url": response.url,
+            "last_updated": None,
+            "category": None,
+            "image_url": image_url,
+            "author": None,
+            "published_date": None,
+            "source": "timesofindia.indiatimes.com",
+            "content": content if content else None,
+            "tags": None,
+            "comments_count": None,
+            "shares_count": None,
+            "sentiment": None,
+            "bias_score": None
+        }
