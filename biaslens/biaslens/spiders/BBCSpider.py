@@ -44,7 +44,6 @@ class BbcspiderSpider(scrapy.Spider):
                             "shares_count": None,
                             "sentiment": None,
                             "bias_score": None,
-                            "vector_embeddings": None,
                         }
                     }
                 )
@@ -65,7 +64,6 @@ class BbcspiderSpider(scrapy.Spider):
                     "shares_count": None,
                     "sentiment": None,
                     "bias_score": None,
-                    "vector_embeddings": None,
                 }
 
     def parse_article_content(self, response):
@@ -75,20 +73,32 @@ class BbcspiderSpider(scrapy.Spider):
         """
         item = response.meta['item']
 
-        # Extract paragraphs from text-block components
-        paragraphs = response.css(
-            'div[data-component="text-block"]').getall()
+        # Use a better CSS selector to extract just the text from paragraphs
+        paragraph_texts = []
 
-        # In case the selector doesn't match, try alternative selectors
-        if not paragraphs:
-            paragraphs = response.css('article p::text').getall()
+        # Try several selectors to get the paragraph text
+        text_blocks = response.css(
+            'div[data-component="text-block"] p::text').getall()
+        if text_blocks:
+            paragraph_texts.extend(text_blocks)
 
-        if not paragraphs:
-            paragraphs = response.css(
+        # Try alternative selectors if needed
+        if not paragraph_texts:
+            paragraph_texts = response.css('article p::text').getall()
+
+        if not paragraph_texts:
+            paragraph_texts = response.css(
                 'div.ssrcss-uf6wea-RichTextComponentWrapper p::text').getall()
 
+        # For complicated HTML, we might need to get the text from each paragraph
+        if not paragraph_texts:
+            for paragraph in response.css('div[data-component="text-block"] p'):
+                paragraph_text = paragraph.css('::text').get()
+                if paragraph_text:
+                    paragraph_texts.append(paragraph_text.strip())
+
         # Join all paragraphs into a single content string
-        content = '\n'.join([p.strip() for p in paragraphs if p.strip()])
+        content = '\n'.join([p.strip() for p in paragraph_texts if p.strip()])
 
         # Try to extract the author
         author = response.css(
@@ -105,7 +115,16 @@ class BbcspiderSpider(scrapy.Spider):
         # Set the content
         item['content'] = content
 
-        return item
+        # If content is still empty, use a more robust method
+        if not content:
+            # Use a fallback method to extract all visible text
+            visible_texts = response.xpath('//p/text()').getall()
+            content = '\n'.join([t.strip()
+                                for t in visible_texts if t.strip()])
+            item['content'] = content
+
+        # Yield the item instead of returning it for Scrapy to process
+        yield item
 
 
 # TODO : add href to this

@@ -73,8 +73,9 @@ class CollectionManager:
         """Get all articles from the main collection"""
         return list(self.articles_collection.find())
 
-
-def get_all_headlines_and_articles_from_cluster(self, cluster_id: str) -> list:
-    """Get all headlines and articles from a specific cluster"""
-    cluster_collection = self.create_cluster_collection(cluster_id)
-    return list(cluster_collection.find({}, {"headline": 1, "content": 1, "url": 1, "source": 1}))
+    def get_all_headlines_and_articles_from_cluster(self, cluster_id: str) -> list:
+        """Get all headlines and articles from a specific cluster"""
+        count = self.articles_collection.count_documents({})
+        logging.info(f"Found {count} articles in collection")
+        cluster_collection = self.create_cluster_collection(cluster_id)
+        return list(cluster_collection.find({}, {"headline": 1, "content": 1, "source": 1}))

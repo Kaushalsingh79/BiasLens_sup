@@ -44,6 +44,14 @@ class MongoDBPipeline:
         """Process each item and save to MongoDB"""
         adapter = ItemAdapter(item)
 
+        # Clean the content if it contains HTML
+        content = adapter.get('content')
+        if content and ('<' in content or '>' in content):
+            # Simple HTML stripping
+            import re
+            content = re.sub('<[^<]+?>', '', content)
+            adapter['content'] = content.strip()
+
         # Use URL as unique key
         url = adapter.get('url')
         if not url:
