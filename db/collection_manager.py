@@ -73,6 +73,10 @@ class CollectionManager:
         """Get all articles from the main collection"""
         return list(self.articles_collection.find())
 
+    def get_all_clusters(self):
+        """Get all clusters from the clusters collection"""
+        return list(self.clusters_collection.find({}, {"cluster_id": 1}))
+
     def get_all_headlines_and_articles_from_cluster(self, cluster_id: str) -> list:
         """Get all headlines and articles from a specific cluster"""
         count = self.articles_collection.count_documents({})

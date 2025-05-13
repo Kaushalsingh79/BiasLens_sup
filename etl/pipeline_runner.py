@@ -57,9 +57,15 @@ class ETLPipelineRunner:
 
         logging.info(f"Running clustering on {len(all_articles)} articles")
 
+        # clear previous cluster collections
+        self.clustering_service.clear_cluster_collections()
+
         # Process articles for clustering
         cluster_stats = self.clustering_service.process_new_articles(
             all_articles)
+
+        # create visualization of clusters
+        # self.clustering_service.create_visualizations(cluster_stats)
 
         logging.info(
             f"Clustering complete. Found {len(cluster_stats)} clusters")
@@ -116,6 +122,10 @@ class ETLPipelineRunner:
                         f"Extracting facts from {len(articles_for_extraction)} articles in cluster {cluster_id}")
                     cluster_fact_extraction.get_cluster_facts_and_store_in_mongo(
                         articles_for_extraction)
+
+                    # cluster_fact_extraction.visualize_article_and_fact_word_counts(
+                    # articles_for_extraction)
+
                 else:
                     logging.warning(
                         f"No valid articles found for fact extraction in cluster {cluster_id}")

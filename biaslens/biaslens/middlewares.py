@@ -3,6 +3,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+import random
 from scrapy import signals
 
 # useful for handling different item types with a single interface
@@ -101,3 +102,41 @@ class BiaslensDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+
+# filepath: c:\Users\1100a\Documents\BiasLens\biaslens\biaslens\middlewares.py
+
+
+class CustomProxyMiddleware(object):
+    def __init__(self, settings):
+        # You should populate this list with your proxies
+        # Format: 'http://ip:port' or 'http://user:password@ip:port'
+        self.proxies = settings.getlist('PROXY_LIST')
+        if not self.proxies:
+            # You can raise an error or log a warning if no proxies are provided
+            print("Warning: PROXY_LIST is empty in settings.py. No proxies will be used.")
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings)
+
+    def process_request(self, request, spider):
+        if not self.proxies:
+            return  # Don't set proxy if list is empty
+
+        # Don't PProxy if 'dont_proxy' is set in request.meta
+        if request.meta.get('dont_proxy'):
+            return
+
+        proxy = random.choice(self.proxies)
+        request.meta['proxy'] = proxy
+        spider.logger.debug(f"Using proxy: {proxy} for request: {request.url}")
+
+    def process_exception(self, request, exception, spider):
+        # Handle proxy errors if needed, e.g., try another proxy
+        proxy = request.meta.get('proxy')
+        spider.logger.warning(
+            f"Proxy {proxy} failed for {request.url} with exception: {exception}")
+        # You could implement logic here to ban a failing proxy or retry with a new one
+        # For simplicity, we'll just let Scrapy handle the retry with a potentially new proxy on the next attempt
+        return None  # Return None to let Scrapy's default exception handling take over

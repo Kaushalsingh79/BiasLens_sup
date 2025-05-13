@@ -67,6 +67,23 @@ ROBOTSTXT_OBEY = False
 #    "biaslens.middlewares.BiaslensDownloaderMiddleware": 543,
 # }
 
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+    # If you also want to try random but browser-specific user agents
+    'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
+    'biaslens.middlewares.CustomProxyMiddleware': 350,  # Adjust priority as needed
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 400,
+}
+
+
+# PROXY_LIST = [
+#     # Populate with your actual proxies
+#     # e.g., 'http://123.45.67.89:8080',
+#     #       'http://username:password@another.proxy.com:3128',
+#     'http://119.156.195.171:3128',
+# ]
+
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 # EXTENSIONS = {

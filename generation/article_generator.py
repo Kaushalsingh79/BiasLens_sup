@@ -260,7 +260,7 @@ if __name__ == '__main__':
     #     facts_collection.insert_many(dummy_facts)
     # client.close()
 
-    test_cluster_id = 54  # Using int as per the error and likely origin
+    test_cluster_id = 23  # Using int as per the error and likely origin
     print(
         f"Generating report for cluster: {test_cluster_id} using Langchain and Groq...")
 

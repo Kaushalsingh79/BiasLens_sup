@@ -10,6 +10,23 @@ class ClusteringService:
     def __init__(self):
         self.collection_manager = CollectionManager()
         self.clustering = ArticleClustering()
+        self.model = ArticleClustering(distance_threshold=1.5)
+        self.articles = []
+        self.clustered_df = None
+
+    def clear_cluster_collections(self):
+        """
+        Clear all cluster collections in the database with naming convention cluster_<cluster_id>
+        """
+        logging.info("Clearing all cluster collections")
+
+        cluster_collections = self.collection_manager.get_all_clusters()
+        for collection in cluster_collections:
+            if "cluster_" in collection:
+                self.collection_manager.clear_collection(collection)
+                logging.info(f"Cleared collection: {collection}")
+
+        # Clear main collection
 
     def process_new_articles(self, articles):
         """
@@ -71,3 +88,12 @@ class ClusteringService:
 
         logging.info(f"Updated {len(cluster_stats)} clusters")
         return cluster_stats
+
+    def create_visualizations(self, clustered_df):
+        """
+        Create visualizations for the clustered articles
+        """
+        # Placeholder for visualization logic
+        logging.info("Creating visualizations for clustered articles")
+        # Implement your visualization logic here
+        self.model.visualize_clusters_with_dendrogram_and_heatmap(clustered_df)
