@@ -70,3 +70,12 @@ class MongoDBPipeline:
             logging.error(f"Error saving to MongoDB: {str(e)}")
 
         return item
+    def ping(self):
+        """Test the MongoDB connection"""
+        try:
+            self.client.admin.command('ping')
+            logging.info("MongoDB connection verified")
+            return True
+        except Exception as e:
+            logging.error(f"MongoDB connection failed: {str(e)}")
+            raise
