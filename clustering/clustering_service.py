@@ -2,6 +2,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from db.collection_manager import CollectionManager
 from clustering.article_clustering import ArticleClustering
 import logging
