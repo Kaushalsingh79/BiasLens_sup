@@ -241,9 +241,8 @@ GROQ_API_KEY=your_key_here
 **Developed:** January 2025  
 **Status:** Production-tested on Indian news domain  
 **Core Thesis:** LLMs should be treated like ML models—structured inputs, deterministic inference, measurable outputs.
-```
 
-The key additions:
+### The key additions:
 - **The Core Thesis** section explaining your hypothesis upfront
 - **The Hypothesis (Tested, Not Proven)** with honest framing
 - **What the LLM Never Sees** - highlighting the deliberate starvation of narrative context
