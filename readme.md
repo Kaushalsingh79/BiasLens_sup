@@ -7,6 +7,7 @@
 
 ---
 
+![Preview](assets/preview.png)
 ## The Core Thesis
 
 LLMs are not magic black boxes that can consume unstructured noise and return structured truth. Yet most applications treat them exactly that way—dumping raw, redundant, contradictory articles into a chat window and expecting neutral, factual synthesis.
@@ -15,7 +16,7 @@ BiasLens operates on a different premise: **LLMs should be treated like any othe
 
 The pipeline tests a specific hypothesis:
 
-> *If an LLM receives only atomic facts (no narrative framing, no redundant noise, no contradictory context) and inference is set to temperature=0 (deterministic), then the model will minimize hallucination, reduce bias amplification, and produce consistently factual outputs—because it has no room to improvise.*
+> *If an LLM receives only atomic facts (no narrative framing, no redundant noise, no contradictory context) and inference is set to temperature=0 (determinism in outputs), then the model will minimize hallucination, reduce bias amplification, and produce consistently factual outputs—because it has no room to improvise.*
 
 This is not formal research. It is a working hypothesis validated through practical deployment.
 
@@ -30,7 +31,7 @@ The pipeline ingests news articles from Indian publishers, groups similar storie
 | Problem | BiasLens Solution |
 |---------|-------------------|
 | LLMs amplify source bias when given unstructured narratives | Facts are stripped of narrative framing before LLM sees them |
-| Hallucinations increase with temperature variance | Temperature fixed at 0 → deterministic outputs |
+| Hallucinations increase with temperature variance | Temperature fixed at 0 → determinism in outputs |
 | Redundant information confuses synthesis | Semantic clustering deduplicates before extraction |
 | Contradictory claims cause incoherent outputs | SVO extraction preserves contradictions with attribution |
 | No source attribution for generated claims | Each fact carries source metadata through the pipeline |
@@ -64,7 +65,7 @@ At temperature=0, the model cannot be creative. It cannot choose between competi
 **Expected outcomes (observed in practice):**
 - Reduced hallucination (model has nothing to invent)
 - Reduced bias amplification (narrative framing removed upstream)
-- Deterministic outputs (same cluster → similar report every time)
+- Determinism in outputs (same cluster → similar report every time)
 - Source attribution preserved (each fact carries its source through generation)
 
 **Trade-offs:**
@@ -99,7 +100,7 @@ flowchart TD
     
     I --> J{Cache Check}
     J -->|Cache Hit| K[Return Cached Report]
-    J -->|Cache Miss| L[Groq LLaMA 3.1<br/>temperature=0<br/>Deterministic only]
+    J -->|Cache Miss| L[Groq LLaMA 3.1<br/>temperature=0<br/>Determinism in outputs]
     
     L --> M[Unbiased Article]
     L --> N[Timeline JSON]
@@ -124,7 +125,7 @@ flowchart TD
 | **Fact Extraction** | SVO triples | Strips narrative framing. Removes adjectives, opinions, stylistic bias. Leaves only who-did-what. |
 | **Deduplication** | Exact match on SVO | Same fact from multiple sources stored once with multiple source citations. Reduces noise. |
 | **Retrieval** | FAISS (384-dim) | Only relevant facts enter context window. No irrelevant information to confuse the model. |
-| **Generation** | LLaMA 3.1, temp=0 | Deterministic outputs only. No creative variation. No temperature-driven hallucinations. |
+| **Generation** | LLaMA 3.1, temp=0 | Determinism in outputs. No creative variation. No temperature-driven hallucinations. |
 | **Caching** | MongoDB | Same cluster → same facts → same output every time. No regeneration cost. |
 
 ---
@@ -161,7 +162,7 @@ graph LR
     end
 ```
 
-At temperature > 0, the same facts produce different outputs each run. This is desirable for creative tasks. For factual synthesis, it is unacceptable. BiasLens fixes temperature at 0: the model always selects the highest-probability token. Outputs are deterministic, reproducible, and verifiable.
+At temperature > 0, the same facts produce different outputs each run. This is desirable for creative tasks. For factual synthesis, it is unacceptable. BiasLens fixes temperature at 0: the model always selects the highest-probability token. Outputs are reproducible, and verifiable.
 
 ---
 
@@ -197,7 +198,7 @@ BiasLens is not:
 - A real-time news monitor
 - A replacement for journalistic judgment
 
-BiasLens is a structured pipeline that tests a specific hypothesis about LLM behavior: **clean inputs, deterministic inference, factual outputs.**
+BiasLens is a structured pipeline that tests a specific hypothesis about LLM behavior: **clean inputs, inference, factual outputs.**
 
 ---
 
@@ -240,7 +241,7 @@ GROQ_API_KEY=your_key_here
 
 **Developed:** January 2025  
 **Status:** Production-tested on Indian news domain  
-**Core Thesis:** LLMs should be treated like ML models—structured inputs, deterministic inference, measurable outputs.
+**Core Thesis:** LLMs should be treated like ML models—structured inputs, inference, measurable outputs.
 
 ### The key additions:
 - **The Core Thesis** section explaining your hypothesis upfront
@@ -249,4 +250,4 @@ GROQ_API_KEY=your_key_here
 - **Temperature=0 Constraint** with visual comparison
 - **Handling Contradictions** - showing how attribution replaces resolution
 - **What This Is Not** - honest scope definition
-- The final line: "structured inputs, deterministic inference, measurable outputs" as your guiding principle
+- The final line: "structured inputs, inference, measurable outputs" as your guiding principle
