@@ -2,7 +2,7 @@ import json
 import scrapy
 
 
-class BbcspiderSpider(scrapy.Spider):
+class BBCSpider(scrapy.Spider):
     name = "BBCSpider"
     allowed_domains = ["web-cdn.api.bbci.co.uk",
                        "bbc.com"]  # Add bbc.com domain
