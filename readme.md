@@ -158,7 +158,7 @@ graph LR
     
     subgraph "BiasLens (temp = 0)"
         A2[Input: Facts] --> B2[LLM<br/>Determinism]
-        B2 --> C2[One Output<br/>Every Time]
+        B2 --> C2[Similar output<br/>Every Time]
     end
 ```
 
